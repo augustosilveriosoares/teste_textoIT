@@ -1,5 +1,7 @@
 package com.textoit.raspberry.controllers;
 
+import com.textoit.raspberry.exceptions.CsvHeaderException;
+import com.textoit.raspberry.exceptions.MovieListNotFoundException;
 import com.textoit.raspberry.models.Award;
 import com.textoit.raspberry.models.MovieList;
 import com.textoit.raspberry.services.AwardService;
@@ -9,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.*;
+
 import java.util.*;
 
 @RestController
@@ -21,10 +23,17 @@ public class MovieListController {
     private AwardService as;
 
     @GetMapping("/list")
-    public Object getAll() throws Exception{
+    public Object getAll() {
 
         List<Award> max = as.findMax();
         Collections.sort(max, Comparator.comparingLong(Award::getInterval).reversed());
+        try {
+            if (max.isEmpty()) {
+                throw new MovieListNotFoundException("Nenhum dado salvo , por favor faça upload da lista");
+            }
+        } catch (MovieListNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
         List<Award> min = as.findMin();
         Collections.sort(min, Comparator.comparingLong(Award::getInterval));
         Map<String, List<Award>> response = new HashMap<>();
@@ -34,13 +43,21 @@ public class MovieListController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<List<MovieList>> save(@RequestParam("file") MultipartFile file) throws IOException {
-       List<MovieList> movieList = ms.persistCsv(file);
-       return ResponseEntity.status(HttpStatus.OK).body(movieList);
+
+    public Object save(@RequestParam("file") MultipartFile file) {
+        List<MovieList> movieList = null;
+
+        try {
+            movieList = ms.persistCsv(file);
+        } catch (CsvHeaderException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(movieList);
     }
 
     @DeleteMapping("list")
-    public ResponseEntity<Object> deleteAll(){
+    public ResponseEntity<Object> deleteAll() {
         ms.truncate();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("A Lista foi limpa");
 

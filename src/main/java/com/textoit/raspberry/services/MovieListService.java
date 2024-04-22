@@ -1,6 +1,7 @@
 package com.textoit.raspberry.services;
 
 
+import com.textoit.raspberry.exceptions.CsvHeaderException;
 import com.textoit.raspberry.models.MovieList;
 import com.textoit.raspberry.repositories.IMovieListRepository;
 import org.apache.commons.csv.CSVFormat;
@@ -14,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,12 +24,20 @@ public class MovieListService {
     @Autowired
     private IMovieListRepository r;
 
-    public List<MovieList> persistCsv(MultipartFile file){
+    public List<MovieList> persistCsv(MultipartFile file) throws CsvHeaderException{
 
         ArrayList<MovieList> movieList = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
             CSVParser p = CSVFormat.RFC4180.withDelimiter(';').builder().setHeader().setSkipHeaderRecord(true).build().parse(br);
+
+            List<String> expectedColumns = Arrays.asList("year", "title", "producers", "studios", "winner");
+            String[] header = p.getHeaderNames().toArray(new String[0]);
+            if(!Arrays.asList(header).containsAll(expectedColumns)){
+                throw new CsvHeaderException("O Cabeçalho do CSV não está de acordo com o padrão");
+            }
+
+            r.truncateTable();
             for (CSVRecord record : p) {
                 MovieList m = new MovieList();
                 m.setYear(Long.valueOf(record.get("year")));

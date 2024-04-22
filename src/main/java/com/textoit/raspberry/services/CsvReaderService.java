@@ -14,7 +14,7 @@ import java.io.*;
 @Component
 public class CsvReaderService implements CommandLineRunner {
 
-    private static final String CSV_FILE_PATH = "src/main/resources/data/movielist.csv";
+    private static final String CSV_FILE_PATH = "src/main/resources/data/testmovielist.csv";
     @Autowired
     private IMovieListRepository mr;
 
