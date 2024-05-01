@@ -20,8 +20,8 @@ public class CsvReaderService implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        try {
-            System.out.println("teste");
+        /*try {
+
             InputStream inputStream = new FileInputStream(CSV_FILE_PATH);
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             CSVParser p = CSVFormat.RFC4180.withDelimiter(';').builder().setHeader().setSkipHeaderRecord(true).build().parse(br);
@@ -34,7 +34,7 @@ public class CsvReaderService implements CommandLineRunner {
                 m.setWinner((record.get("winner") != null && record.get("winner").equalsIgnoreCase("yes") ? true : false));
                 mr.save(m);
             }
-        } catch (IOException e) {e.printStackTrace();}
+        } catch (IOException e) {e.printStackTrace();}*/
 
     }
 }

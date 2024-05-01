@@ -1,26 +1,28 @@
 package com.textoit.raspberry.controllers;
 
 import com.textoit.raspberry.exceptions.CsvHeaderException;
+import com.textoit.raspberry.exceptions.InvalidFileFormatException;
 import com.textoit.raspberry.exceptions.MovieListNotFoundException;
 import com.textoit.raspberry.models.Award;
-import com.textoit.raspberry.models.MovieList;
 import com.textoit.raspberry.services.AwardService;
-import com.textoit.raspberry.services.MovieListService;
+import com.textoit.raspberry.services.CsvPersistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
-public class MovieListController {
+public class RaspberryController {
 
     @Autowired
-    private MovieListService ms;
+    private CsvPersistService csvPersistService;
     @Autowired
     private AwardService as;
+
 
     @GetMapping("/list")
     public Object getAll() {
@@ -45,20 +47,17 @@ public class MovieListController {
     @PostMapping("/list")
 
     public Object save(@RequestParam("file") MultipartFile file) {
-        List<MovieList> movieList = null;
-
         try {
-            movieList = ms.persistCsv(file);
-        } catch (CsvHeaderException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(csvPersistService.persistCsv(file));
+        } catch (InvalidFileFormatException | CsvHeaderException | IOException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(movieList);
     }
 
     @DeleteMapping("list")
     public ResponseEntity<Object> deleteAll() {
-        ms.truncate();
+        //csvPersistService.truncate();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("A Lista foi limpa");
 
     }
