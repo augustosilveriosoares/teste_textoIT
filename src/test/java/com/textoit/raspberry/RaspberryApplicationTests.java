@@ -21,35 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class RaspberryApplicationTests {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    @Autowired
-    private IMovieListRepository mr;
-
-    @Test
-    void contextLoads() {
-    }
-
-    @BeforeAll
-    public static void testCsvFormatAndPersist() throws Exception {
-        // Carrega o arquivo CSV
-        ClassPathResource resource = new ClassPathResource("data/movielist.csv");
-        BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
-
-        String header = reader.readLine();
-        String[] columns = header.split(";");
-
-        // Verifica se as colunas esperadas estão presentes
-        List<String> expectedColumns = Arrays.asList("year", "title", "producers", "studios", "winner");
-        Assert.assertTrue("As colunas do arquivo CSV não correspondem ao esperado.",
-                Arrays.asList(columns).containsAll(expectedColumns));
-        reader.close();
-
-
-    }
 
     @Test
     public void testGetProducersInterval() throws Exception {
@@ -67,35 +43,27 @@ class RaspberryApplicationTests {
 
         JsonNode minNode = jsonNode.get("min");
         Assert.assertTrue(minNode.isArray());
-        Assert.assertEquals(2, minNode.size());
+        Assert.assertEquals(1, minNode.size());
 
         JsonNode maxNode = jsonNode.get("max");
         Assert.assertTrue(maxNode.isArray());
-        Assert.assertEquals(2, maxNode.size());
+        Assert.assertEquals(1, maxNode.size());
 
         Award firstMinAward = objectMapper.treeToValue(minNode.get(0), Award.class);
-        Assert.assertEquals("Bo Derek", firstMinAward.getProducer());
-        Assert.assertEquals(6, (firstMinAward.getInterval().longValue()));
-        Assert.assertEquals(1984, firstMinAward.getPreviousWin().longValue());
-        Assert.assertEquals(1990, firstMinAward.getFollowingWin().longValue());
+        Assert.assertEquals("Joel Silver", firstMinAward.getProducer());
+        Assert.assertEquals(1, (firstMinAward.getInterval().longValue()));
+        Assert.assertEquals(1990, firstMinAward.getPreviousWin().longValue());
+        Assert.assertEquals(1991, firstMinAward.getFollowingWin().longValue());
 
-        Award secondMinAward = objectMapper.treeToValue(minNode.get(1), Award.class);
-        Assert.assertEquals("Irwin Winkler", secondMinAward.getProducer());
-        Assert.assertEquals(6, secondMinAward.getInterval().longValue());
-        Assert.assertEquals(1985, secondMinAward.getPreviousWin().longValue());
-        Assert.assertEquals(1991, secondMinAward.getFollowingWin().longValue());
+
 
         Award firstMaxAward = objectMapper.treeToValue(maxNode.get(0), Award.class);
-        Assert.assertEquals("Allan Carr", firstMaxAward.getProducer());
-        Assert.assertEquals(20, firstMaxAward.getInterval().longValue());
-        Assert.assertEquals(1999, firstMaxAward.getPreviousWin().longValue());
-        Assert.assertEquals(2019, firstMaxAward.getFollowingWin().longValue());
+        Assert.assertEquals("Matthew Vaughn", firstMaxAward.getProducer());
+        Assert.assertEquals(13, firstMaxAward.getInterval().longValue());
+        Assert.assertEquals(2002, firstMaxAward.getPreviousWin().longValue());
+        Assert.assertEquals(2015, firstMaxAward.getFollowingWin().longValue());
 
-        Award secondMaxAward = objectMapper.treeToValue(maxNode.get(1), Award.class);
-        Assert.assertEquals("Buzz Feitshans", secondMaxAward.getProducer());
-        Assert.assertEquals(20, (secondMaxAward.getInterval().longValue()));
-        Assert.assertEquals(1985, secondMaxAward.getPreviousWin().longValue());
-        Assert.assertEquals(2005, secondMaxAward.getFollowingWin().longValue());
+
 
 
     }

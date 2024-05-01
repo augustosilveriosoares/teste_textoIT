@@ -18,4 +18,4 @@ DELETE: Irá limpar os dados salvos no banco da última lista enviada.
 
 **Teste**
 
-Execute a classe de teste RaspberryApplicationTests em src/test/java.
+Execute a classe de teste RaspberryApplicationTests em src/test/java. Ela irá iniciar automaticamente o servico e realizara o teste.
