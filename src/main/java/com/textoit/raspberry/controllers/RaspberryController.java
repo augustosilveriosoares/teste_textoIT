@@ -57,7 +57,7 @@ public class RaspberryController {
 
     @DeleteMapping("list")
     public ResponseEntity<Object> deleteAll() {
-        //csvPersistService.truncate();
+        csvPersistService.truncate();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("A Lista foi limpa");
 
     }

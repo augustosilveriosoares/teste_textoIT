@@ -33,6 +33,7 @@ public class CsvPersistService {
     private CSVParser parser;
 
     public List<Recommendation> persistCsv(MultipartFile file) throws InvalidFileFormatException, IOException {
+        truncate();
         CSVValidator.validate(file);
         persistProducers(file);
         persistMovies(file);
@@ -134,5 +135,18 @@ public class CsvPersistService {
         return producers;
     }
 
+    public List<Recommendation> persistCsvOnLoad(MultipartFile file) throws InvalidFileFormatException, IOException {
 
+        persistProducers(file);
+        persistMovies(file);
+        persistRecommendations(file);
+        return recommendationRepository.findAll();
+    }
+
+
+    public void truncate() {
+        recommendationRepository.truncateTable();
+        movieRepository.truncateTable();
+        producerRepository.truncateTable();
+    }
 }

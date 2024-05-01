@@ -3,8 +3,6 @@ package com.textoit.raspberry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.textoit.raspberry.models.Award;
-import com.textoit.raspberry.repositories.IMovieListRepository;
-import org.aspectj.lang.annotation.Before;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,7 +36,7 @@ class RaspberryApplicationTests {
     @BeforeAll
     public static void testCsvFormatAndPersist() throws Exception {
         // Carrega o arquivo CSV
-        ClassPathResource resource = new ClassPathResource("data/testmovielist.csv");
+        ClassPathResource resource = new ClassPathResource("data/movielist.csv");
         BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
 
         String header = reader.readLine();

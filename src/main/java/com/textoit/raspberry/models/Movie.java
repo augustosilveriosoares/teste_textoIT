@@ -27,7 +27,7 @@ public class Movie {
 
 		private String studio;
 
-	    @ManyToMany(cascade = CascadeType.ALL)
+	    @ManyToMany
 	    @JoinTable(
 	        name = "movie_producer",
 	        joinColumns = @JoinColumn(name = "movie_id"),

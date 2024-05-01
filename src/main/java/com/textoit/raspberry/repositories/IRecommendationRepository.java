@@ -12,6 +12,7 @@ public interface IRecommendationRepository extends JpaRepository<Recommendation,
 
     @Transactional
     @Modifying
-    @Query(value = "TRUNCATE TABLE recommendations", nativeQuery = true)
+    @Query(value = "SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE recommendations; SET REFERENTIAL_INTEGRITY TRUE;", nativeQuery = true)
     void truncateTable();
+
 }
